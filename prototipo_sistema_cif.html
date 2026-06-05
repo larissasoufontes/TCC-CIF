@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema CIF — Protótipo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-dark:   #0a5c42;
+    --green-mid:    #1D9E75;
+    --green-light:  #9FE1CB;
+    --green-pale:   #E1F5EE;
+    --surface:      #ffffff;
+    --surface-2:    #f7f8f6;
+    --border:       #e4e7e3;
+    --text-primary: #1a1f1c;
+    --text-muted:   #6b7a71;
+    --text-faint:   #a8b5ae;
+    --amber-pale:   #fff8ed;
+    --amber-text:   #7a4f00;
+    --red-pale:     #fff0f0;
+    --red-text:     #7a1f1f;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #f0f2f0;
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .page-title {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-title h1 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .page-title p {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  .screens {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .screen-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .screen-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-faint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-left: 2px;
+  }
+
+  .app {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .topbar {
+    background: var(--green-dark);
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo {
+    width: 26px; height: 26px;
+    background: var(--green-mid);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: #fff;
+  }
+  .topbar-title { color: #fff; font-size: 13px; font-weight: 500; }
+  .topbar-user {
+    font-size: 11px;
+    color: var(--green-light);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .topbar-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 500; color: #fff;
+  }
+
+  .content { padding: 18px 20px; }
+
+  .patient-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: var(--green-dark);
+    flex-shrink: 0;
+    border: 1.5px solid var(--green-light);
+  }
+  .patient-name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .patient-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .btn {
+    border-radius: 8px; padding: 7px 13px;
+    font-size: 12px; font-family: var(--font);
+    cursor: pointer; font-weight: 400;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-primary { background: var(--green-mid); color: #fff; border: none; }
+  .btn-secondary { background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .section-title {
+    font-size: 11px; font-weight: 500;
+    color: var(--text-faint);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    text-align: left; color: var(--text-faint);
+    font-size: 11px; font-weight: 500;
+    padding: 0 8px 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 8px 9px 0;
+    border-bottom: 1px solid #f0f2f0;
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .code {
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500;
+    color: var(--green-dark);
+    background: var(--green-pale);
+    padding: 2px 7px; border-radius: 5px;
+  }
+
+  .badge {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 20px; font-size: 11px; font-weight: 400;
+  }
+  .b0 { background: var(--green-pale); color: var(--green-dark); }
+  .b1 { background: #edf5e0; color: #3a5c15; }
+  .b2 { background: var(--amber-pale); color: var(--amber-text); }
+  .b3 { background: #fff1e6; color: #7a3500; }
+  .b4 { background: var(--red-pale); color: var(--red-text); }
+
+  .prof { font-size: 11px; color: var(--text-muted); }
+
+  .form-row { margin-bottom: 13px; }
+  .form-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: 500; }
+  .form-input {
+    width: 100%; border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 11px;
+    font-size: 12px; color: var(--text-primary);
+    background: var(--surface); font-family: var(--font);
+  }
+  .form-input.placeholder { color: var(--text-faint); }
+
+  .search-result {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 12px;
+    margin-top: 5px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sr-code {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    color: var(--green-dark); background: var(--green-pale);
+    padding: 3px 8px; border-radius: 5px; white-space: nowrap;
+  }
+  .sr-desc { font-size: 12px; color: var(--text-muted); }
+
+  .qual-row { display: flex; gap: 6px; }
+  .qual-btn {
+    flex: 1; padding: 8px 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px; font-size: 11px;
+    text-align: center; cursor: pointer;
+    background: var(--surface-2); color: var(--text-muted);
+    font-family: var(--font); line-height: 1.4;
+  }
+  .qual-btn.sel {
+    background: var(--green-mid); color: #fff;
+    border-color: var(--green-mid); font-weight: 500;
+  }
+
+  .action-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  .obs-field {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 11px; font-size: 12px; color: var(--text-faint);
+    background: var(--surface); font-family: var(--font); min-height: 52px;
+  }
+
+  .footer {
+    text-align: center; margin-top: 36px;
+    font-size: 11px; color: var(--text-faint);
+    line-height: 1.8;
+  }
+  .footer strong { color: var(--text-muted); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>Banco de Dados e Interface para Organização de Informações em Saúde com base na CIF</h1>
+  <p>Protótipo de interface — Escola Politécnica · USP · TCC 2026</p>
+</div>
+
+<div class="screens">
+
+  <!-- TELA 1 -->
+  <div class="screen-wrap">
+    <div class="screen-label">Tela 1 — perfil do paciente e histórico CIF</div>
+    <div class="app">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-logo">C</div>
+          <span class="topbar-title">Sistema CIF</span>
+        </div>
+        <div class="topbar-user">
+          <div class="topbar-dot">AS</div>
+          Dra. Ana Souza · Hospital das Clínicas
+        </div>
+      </div>
+      <div class="content">
+        <div class="patient-header">
+          <div class="avatar">MS</div>
+          <div>
+            <div class="patient-name">Maria da Silva</div>
+            <div class="patient-meta">52 anos · Feminino · São Paulo, SP</div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary">↓ Exportar</button>
+            <button class="btn btn-primary">+ Nova classificação</button>
+          </div>
+        </div>
+
+        <div class="section-title">Histórico de classificações CIF</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Qualificador</th>
+              <th>Data</th>
+              <th>Profissional</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="code">b7301.3</span></td>
+              <td style="font-size:11px;">Força muscular — lado do corpo</td>
+              <td><span class="badge b3">3 — grave</span></td>
+              <td style="font-size:11px; color:var(--text-muted);">12/05/2026</td>
+              <td class="prof">Dra. Ana Souza</td>
+            </tr>
+            <tr>
+              <td><span class="code">d450.2</span></td>
+              <td style="font-size:11px;">Andar</td>
+              <td><span class="badge b2">2 — moderado</span></td>
+              <td style="font-size:11px; color:var(--text-muted);">12/05/2026</td>
+              <td class="prof">Dra. Ana Souza</td>
+            </tr>
+            <tr>
+              <td><span class="code">d4600.1</span></td>
+              <td style="font-size:11px;">Mover-se pela casa</td>
+              <td><span class="badge b1">1 — leve</span></td>
+              <td style="font-size:11px; color:var(--text-muted);">03/03/2026</td>
+              <td class="prof">Dr. Carlos Lima</td>
+            </tr>
+            <tr>
+              <td><span class="code">e1151.0</span></td>
+              <td style="font-size:11px;">Produtos de apoio pessoal</td>
+              <td><span class="badge b0">0 — nenhum</span></td>
+              <td style="font-size:11px; color:var(--text-muted);">03/03/2026</td>
+              <td class="prof">Dr. Carlos Lima</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 2 -->
+  <div class="screen-wrap">
+    <div class="screen-label">Tela 2 — nova classificação CIF</div>
+    <div class="app">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-logo">C</div>
+          <span class="topbar-title">Nova classificação — Maria da Silva</span>
+        </div>
+        <div class="topbar-user">
+          <div class="topbar-dot">AS</div>
+          Dra. Ana Souza
+        </div>
+      </div>
+      <div class="content">
+        <div class="form-row">
+          <label class="form-label">Buscar código CIF</label>
+          <div class="form-input placeholder">marcha</div>
+          <div class="search-result">
+            <span class="sr-code">d450</span>
+            <div>
+              <div style="font-size:12px; font-weight:500; color:var(--text-primary);">Andar</div>
+              <div class="sr-desc">Mover-se a pé, passo a passo, de modo que um pé esteja sempre no chão</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Qualificador genérico</label>
+          <div class="qual-row">
+            <div class="qual-btn">0<br><span style="font-size:10px">nenhum</span></div>
+            <div class="qual-btn">1<br><span style="font-size:10px">leve</span></div>
+            <div class="qual-btn sel">2<br><span style="font-size:10px">moderado</span></div>
+            <div class="qual-btn">3<br><span style="font-size:10px">grave</span></div>
+            <div class="qual-btn">4<br><span style="font-size:10px">completo</span></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Data da avaliação</label>
+          <div class="form-input">12/05/2026</div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Observação (opcional)</label>
+          <div class="obs-field">Paciente relata dificuldade em terrenos irregulares...</div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-secondary">Cancelar</button>
+          <button class="btn btn-primary">Salvar classificação</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>Autoras:</strong> Carine Guzzi Santos e Larissa de Souza Fontes &nbsp;·&nbsp;
+  <strong>Orientador:</strong> Prof. Dr. Chi Nan Pai &nbsp;·&nbsp;
+  Escola Politécnica — USP — TCC 2026
+</div>
+
+</body>
+</html>
