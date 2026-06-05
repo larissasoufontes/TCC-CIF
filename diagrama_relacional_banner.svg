@@ -1,0 +1,157 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640">
+<defs>
+  <marker id="arr-end" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M2 1L8 5L2 9" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="context-stroke"/>
+  </marker>
+</defs>
+
+<rect fill="#F8F8F9" x="0" y="0" width="1200" height="640"/>
+
+<!-- INSTITUICAO -->
+<rect x="20" y="30" width="220" height="156" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="20" y="30" width="220" height="28" rx="4" fill="#4E79A7"/>
+<rect x="20" y="54" width="190" height="4" fill="#4E79A7"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="32" y="48">instituicao</text>
+<rect x="20" y="58" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="71">id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="71">uuid</text>
+<rect x="20" y="76" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="89">nome</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="89">varchar</text>
+<rect x="20" y="94" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="107">tipo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="107">varchar</text>
+<rect x="20" y="112" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="125">cidade</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="125">varchar</text>
+<rect x="20" y="130" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="143">estado</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="143">varchar</text>
+<rect x="20" y="148" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="161">criado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="185" y="161">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="32" y="178">Unidades de saúde</text>
+
+<!-- PROFISSIONAL_INSTITUICAO -->
+<rect x="20" y="370" width="190" height="120" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="20" y="370" width="190" height="28" rx="4" fill="#8B4513"/>
+<rect x="20" y="394" width="190" height="4" fill="#8B4513"/>
+<text font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff" x="32" y="388">profissional_instituicao</text>
+<rect x="20" y="398" width="190" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="411">profissional_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="160" y="411">uuid</text>
+<rect x="20" y="416" width="190" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="429">instituicao_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="160" y="429">uuid</text>
+<rect x="20" y="434" width="190" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="447">inicio_vinculo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="160" y="447">date</text>
+<rect x="20" y="452" width="190" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="32" y="465">fim_vinculo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="160" y="465">date</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="32" y="482">Vínculo profissional–instituição</text>
+
+<!-- PROFISSIONAL -->
+<rect x="280" y="30" width="200" height="174" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="280" y="30" width="200" height="28" rx="4" fill="#59A14F"/>
+<rect x="280" y="54" width="200" height="4" fill="#59A14F"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="292" y="48">profissional</text>
+<rect x="280" y="58" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="71">id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="420" y="71">uuid</text>
+<rect x="280" y="76" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="89">nome</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="420" y="89">varchar</text>
+<rect x="280" y="94" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="107">conselho_profissional</text>
+<rect x="280" y="112" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="125">numero_registro</text>
+<rect x="280" y="130" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="143">especialidade</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="420" y="143">varchar</text>
+<rect x="280" y="148" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="292" y="161">criado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="420" y="161">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="292" y="196">Profissionais de saúde</text>
+
+<!-- CLASSIFICACAO_CIF -->
+<rect x="560" y="30" width="220" height="228" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="560" y="30" width="220" height="28" rx="4" fill="#76B7B2"/>
+<rect x="560" y="54" width="220" height="4" fill="#76B7B2"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="572" y="48">classificacao_cif</text>
+<rect x="560" y="58" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="71">id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="71">uuid</text>
+<rect x="560" y="76" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="89">paciente_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="89">uuid</text>
+<rect x="560" y="94" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="107">profissional_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="107">uuid</text>
+<rect x="560" y="112" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="125">cif_codigo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="125">varchar</text>
+<rect x="560" y="130" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="143">qualificador_generico</text>
+<rect x="560" y="148" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="161">qualificador_extensor</text>
+<rect x="560" y="166" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="179">codigo_completo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="179">varchar</text>
+<rect x="560" y="184" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="197">observacao</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="197">text</text>
+<rect x="560" y="202" width="220" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="215">data_registro</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="215">date</text>
+<rect x="560" y="220" width="220" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="233">criado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="720" y="233">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="572" y="250">Tabela central do sistema</text>
+
+<!-- CIF_CODIGO -->
+<rect x="560" y="370" width="200" height="138" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="560" y="370" width="200" height="28" rx="4" fill="#B07AA1"/>
+<rect x="560" y="394" width="200" height="4" fill="#B07AA1"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="572" y="388">cif_codigo</text>
+<rect x="560" y="398" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="411">codigo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="700" y="411">varchar</text>
+<rect x="560" y="416" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="429">componente</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="700" y="429">char</text>
+<rect x="560" y="434" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="447">categoria</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="700" y="447">varchar</text>
+<rect x="560" y="452" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="465">descricao_pt</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="700" y="465">text</text>
+<rect x="560" y="470" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="572" y="483">importado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="700" y="483">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="572" y="500">Códigos CIF via API OMS</text>
+
+<!-- PACIENTE -->
+<rect x="870" y="30" width="200" height="174" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="870" y="30" width="200" height="28" rx="4" fill="#E15759"/>
+<rect x="870" y="54" width="200" height="4" fill="#E15759"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="882" y="48">paciente</text>
+<rect x="870" y="58" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="71">id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="71">uuid</text>
+<rect x="870" y="76" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="89">nome</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="89">varchar</text>
+<rect x="870" y="94" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="107">data_nascimento</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="107">date</text>
+<rect x="870" y="112" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="125">sexo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="125">char</text>
+<rect x="870" y="130" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="143">municipio</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="143">varchar</text>
+<rect x="870" y="148" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="161">estado</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="161">varchar</text>
+<rect x="870" y="166" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="179">criado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="179">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="882" y="196">Cadastro de pacientes</text>
+
+<!-- EXPORTACAO -->
+<rect x="870" y="370" width="200" height="156" rx="4" fill="#fff" stroke="#ddd" stroke-width="0.8"/>
+<rect x="870" y="370" width="200" height="28" rx="4" fill="#F28E2B"/>
+<rect x="870" y="394" width="200" height="4" fill="#F28E2B"/>
+<text font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" x="882" y="388">exportacao</text>
+<rect x="870" y="398" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="411">id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="411">uuid</text>
+<rect x="870" y="416" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="429">paciente_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="429">uuid</text>
+<rect x="870" y="434" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="447">profissional_id</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="447">uuid</text>
+<rect x="870" y="452" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="465">formato</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="465">varchar</text>
+<rect x="870" y="470" width="200" height="18" fill="#F8F8F9"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="483">caminho_arquivo</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="483">varchar</text>
+<rect x="870" y="488" width="200" height="18" fill="#fff"/>
+<text font-family="Arial, sans-serif" font-size="12" fill="#555" x="882" y="501">gerado_em</text><text font-family="Arial, sans-serif" font-size="12" fill="#888" x="1010" y="501">timestamp</text>
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#999" x="882" y="518">Relatórios gerados</text>
+
+<!-- CONEXÕES -->
+<path fill="none" stroke="#4E79A7" stroke-width="1.5" d="M 115 186 L 115 370" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#59A14F" stroke-width="1.5" d="M 380 204 L 380 340 L 210 340 L 210 370" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#59A14F" stroke-width="1.5" d="M 480 107 L 560 107" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#E15759" stroke-width="1.5" d="M 870 89 L 780 89" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#B07AA1" stroke-width="1.5" d="M 660 370 L 660 258" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#E15759" stroke-width="1.5" d="M 970 204 L 970 370" marker-end="url(#arr-end)"/>
+<path fill="none" stroke="#59A14F" stroke-width="1.5" d="M 480 144 L 530 144 L 530 560 L 870 560 L 870 488" marker-end="url(#arr-end)"/>
+
+<text font-family="Arial, sans-serif" font-size="11" font-style="italic" fill="#bbb" x="20" y="628">Sistema de Informação em Saúde baseado na CIF — Escola Politécnica USP — TCC 2026</text>
+</svg>
