@@ -1,8 +1,8 @@
-# Diagrama Relacional — Sistema CIF
+# Banco de Dados e Interface para Organização de Informações em Saúde com base na CIF
 
-Sistema de informação em saúde baseado na Classificação Internacional de Funcionalidade, Incapacidade e Saúde (CIF).  
-Escola Politécnica — USP | TCC 2026  
-Autoras: Carine Guzzi Santos, Larissa de Souza Fontes
+**Autoras:** Carine Guzzi Santos e Larissa de Souza Fontes  
+**Orientador:** Prof. Dr. Chi Nan Pai  
+**Escola Politécnica — USP — TCC 2026**
 
 ---
 
