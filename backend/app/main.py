@@ -1,6 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -11,7 +21,5 @@ def home():
 @app.get("/pacientes")
 def listar_pacientes():
     return [
-        {"id": 1, "nome": "Maria da Silva"},
-        {"id": 2, "nome": "João Santos"},
-        {"id": 3, "nome": "Ana Oliveira"}
+        {"id": 1, "nome": "Paciente teste do TCC"},
     ]
