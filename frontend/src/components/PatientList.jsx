@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 function PatientList() {
-  const [pacientes, setPacientes] = useState([])
+  const pacientes = [
+    { id: 1, nome: 'Maria da Silva' },
+    { id: 2, nome: 'João Santos' },
+    { id: 3, nome: 'Ana Oliveira' },
+  ]
+
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
-
-  useEffect(() => {
-    async function buscarPacientes() {
-      const resposta = await fetch('http://127.0.0.1:8000/pacientes')
-      const dados = await resposta.json()
-
-      setPacientes(dados)
-    }
-
-    buscarPacientes()
-  }, [])
 
   return (
     <section>
