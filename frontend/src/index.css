@@ -1140,3 +1140,54 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+/* EXPORTAÇÃO DO HISTÓRICO */
+
+.history-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.secondary-action-button {
+  min-height: 46px;
+  padding: 0 20px;
+
+  border: 1px solid #9db8ad;
+  border-radius: 8px;
+
+  background: white;
+  color: #286650;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.secondary-action-button:hover:not(:disabled) {
+  background: #f0f6f3;
+  border-color: #6d9a87;
+}
+
+.secondary-action-button:disabled {
+  border-color: #d6dfdb;
+  background: #f4f6f5;
+  color: #a4afaa;
+
+  cursor: not-allowed;
+}
+
+@media (max-width: 650px) {
+  .history-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .history-actions button {
+    width: 100%;
+  }
+}
