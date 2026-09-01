@@ -979,3 +979,164 @@ input {
     font-size: 2.2rem;
   }
 }
+/* CLASSIFICAÇÕES CIF */
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.history-header .card-heading {
+  margin-bottom: 0;
+}
+
+.classification-form-area {
+  margin-bottom: 28px;
+  padding: 24px;
+
+  border: 1px solid #dce6e1;
+  border-radius: 12px;
+
+  background: #f8fbfa;
+}
+
+.classification-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+
+  border: 1px solid #cfdad5;
+  border-radius: 8px;
+
+  background: white;
+  color: #24332d;
+
+  font: inherit;
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #377661;
+  box-shadow: 0 0 0 3px rgba(55, 118, 97, 0.11);
+}
+
+.form-error {
+  margin: 0;
+
+  font-size: 0.88rem;
+  color: #a33c3c;
+}
+
+.classification-history {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.classification-item {
+  padding: 20px;
+
+  border: 1px solid #dfe7e3;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.classification-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.classification-top h3 {
+  margin: 5px 0 0;
+
+  font-size: 1rem;
+  color: #28453a;
+}
+
+.classification-code {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+
+  color: #4f826f;
+}
+
+.qualifier-badge {
+  padding: 7px 10px;
+
+  border-radius: 999px;
+
+  background: #e4f0eb;
+  color: #286650;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.classification-details {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 20px;
+
+  margin-top: 18px;
+  padding-top: 18px;
+
+  border-top: 1px solid #edf1ef;
+}
+
+.classification-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.classification-details span {
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  color: #84908b;
+}
+
+.classification-details strong {
+  font-size: 0.88rem;
+  font-weight: 500;
+
+  color: #34483f;
+}
+
+@media (max-width: 650px) {
+  .history-header {
+    flex-direction: column;
+  }
+
+  .classification-top {
+    flex-direction: column;
+  }
+
+  .classification-details {
+    grid-template-columns: 1fr;
+  }
+}
