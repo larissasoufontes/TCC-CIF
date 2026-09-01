@@ -119,6 +119,69 @@ function PatientDetails() {
     setMostrarFormulario(false)
   }
 
+  function exportarCSV() {
+    if (classificacoes.length === 0) {
+      return
+    }
+
+    const cabecalho = [
+      'Código CIF',
+      'Qualificador',
+      'Data',
+      'Observação',
+    ]
+
+    const linhas = classificacoes.map((classificacao) => [
+      classificacao.codigo_cif,
+      classificacao.qualificador,
+      classificacao.data,
+      classificacao.observacao || '',
+    ])
+
+    const dadosCSV = [
+      cabecalho,
+      ...linhas,
+    ]
+
+    const csv = dadosCSV
+      .map((linha) =>
+        linha
+          .map((valor) => {
+            const texto = String(valor).replace(/"/g, '""')
+            return `"${texto}"`
+          })
+          .join(';')
+      )
+      .join('\n')
+
+    const blob = new Blob(
+      ['\uFEFF' + csv],
+      {
+        type: 'text/csv;charset=utf-8;',
+      }
+    )
+
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+
+    const nomeArquivo = paciente.nome
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+    link.href = url
+    link.download = `historico_cif_${nomeArquivo}.csv`
+
+    document.body.appendChild(link)
+
+    link.click()
+
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   if (carregando) {
     return (
       <main className="patient-details-page">
@@ -250,17 +313,28 @@ function PatientDetails() {
               </p>
             </div>
 
-            <button
-              type="button"
-              className="primary-action-button"
-              onClick={() =>
-                setMostrarFormulario(!mostrarFormulario)
-              }
-            >
-              {mostrarFormulario
-                ? 'Cancelar'
-                : '+ Nova classificação CIF'}
-            </button>
+            <div className="history-actions">
+              <button
+                type="button"
+                className="secondary-action-button"
+                onClick={exportarCSV}
+                disabled={classificacoes.length === 0}
+              >
+                Exportar CSV
+              </button>
+
+              <button
+                type="button"
+                className="primary-action-button"
+                onClick={() =>
+                  setMostrarFormulario(!mostrarFormulario)
+                }
+              >
+                {mostrarFormulario
+                  ? 'Cancelar'
+                  : '+ Nova classificação CIF'}
+              </button>
+            </div>
           </div>
 
           {mostrarFormulario && (
@@ -311,6 +385,7 @@ function PatientDetails() {
                   <div className="classification-details">
                     <div>
                       <span>Data</span>
+
                       <strong>
                         {classificacao.data}
                       </strong>
@@ -318,6 +393,7 @@ function PatientDetails() {
 
                     <div>
                       <span>Observação</span>
+
                       <strong>
                         {classificacao.observacao ||
                           'Sem observação'}
