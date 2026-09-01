@@ -1,32 +1,52 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import ClassificationForm from '../components/ClassificationForm'
+
 function PatientDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
 
   const [paciente, setPaciente] = useState(null)
+
   const [nome, setNome] = useState('')
   const [idade, setIdade] = useState('')
+
+  const [classificacoes, setClassificacoes] = useState([])
+  const [mostrarFormulario, setMostrarFormulario] = useState(false)
+
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
 
   useEffect(() => {
-    async function buscarPaciente() {
+    async function carregarDados() {
       try {
-        const resposta = await fetch(
+        const respostaPaciente = await fetch(
           `http://127.0.0.1:8000/pacientes/${id}`
         )
 
-        if (!resposta.ok) {
+        if (!respostaPaciente.ok) {
           throw new Error('Paciente não encontrado.')
         }
 
-        const dados = await resposta.json()
+        const dadosPaciente = await respostaPaciente.json()
 
-        setPaciente(dados)
-        setNome(dados.nome)
-        setIdade(dados.idade)
+        setPaciente(dadosPaciente)
+        setNome(dadosPaciente.nome)
+        setIdade(dadosPaciente.idade)
+
+        const respostaClassificacoes = await fetch(
+          `http://127.0.0.1:8000/pacientes/${id}/classificacoes`
+        )
+
+        if (!respostaClassificacoes.ok) {
+          throw new Error('Não foi possível carregar o histórico CIF.')
+        }
+
+        const dadosClassificacoes =
+          await respostaClassificacoes.json()
+
+        setClassificacoes(dadosClassificacoes)
       } catch (erro) {
         setErro(erro.message)
       } finally {
@@ -34,8 +54,18 @@ function PatientDetails() {
       }
     }
 
-    buscarPaciente()
+    carregarDados()
   }, [id])
+
+  async function buscarClassificacoes() {
+    const resposta = await fetch(
+      `http://127.0.0.1:8000/pacientes/${id}/classificacoes`
+    )
+
+    const dados = await resposta.json()
+
+    setClassificacoes(dados)
+  }
 
   async function salvarAlteracoes() {
     const resposta = await fetch(
@@ -84,6 +114,11 @@ function PatientDetails() {
     navigate('/sistema/pacientes')
   }
 
+  async function classificacaoCriada() {
+    await buscarClassificacoes()
+    setMostrarFormulario(false)
+  }
+
   if (carregando) {
     return (
       <main className="patient-details-page">
@@ -95,12 +130,15 @@ function PatientDetails() {
   if (erro || !paciente) {
     return (
       <main className="patient-details-page">
-        <Link to="/sistema/pacientes" className="back-link">
+        <Link
+          to="/sistema/pacientes"
+          className="back-link"
+        >
           ← Voltar para pacientes
         </Link>
 
         <div className="patient-card">
-          <h1>Paciente não encontrado</h1>
+          <h1>Não foi possível carregar o paciente</h1>
           <p>{erro}</p>
         </div>
       </main>
@@ -109,16 +147,24 @@ function PatientDetails() {
 
   return (
     <main className="patient-details-page">
-      <Link to="/sistema/pacientes" className="back-link">
+      <Link
+        to="/sistema/pacientes"
+        className="back-link"
+      >
         ← Voltar para pacientes
       </Link>
 
       <section className="patient-profile-header">
         <div>
-          <span className="page-tag">Perfil do paciente</span>
+          <span className="page-tag">
+            Perfil do paciente
+          </span>
+
           <h1>{paciente.nome}</h1>
+
           <p>
-            Consulte os dados do paciente e acompanhe suas classificações CIF.
+            Consulte os dados do paciente e acompanhe suas
+            classificações CIF.
           </p>
         </div>
       </section>
@@ -126,8 +172,12 @@ function PatientDetails() {
       <section className="patient-details-grid">
         <article className="patient-card">
           <div className="card-heading">
-            <span className="card-eyebrow">Informações pessoais</span>
+            <span className="card-eyebrow">
+              Informações pessoais
+            </span>
+
             <h2>Dados do paciente</h2>
+
             <p>
               Atualize as informações cadastrais quando necessário.
             </p>
@@ -135,25 +185,33 @@ function PatientDetails() {
 
           <div className="patient-form">
             <div className="form-group">
-              <label htmlFor="nome-paciente">Nome completo</label>
+              <label htmlFor="nome-paciente">
+                Nome completo
+              </label>
 
               <input
                 id="nome-paciente"
                 type="text"
                 value={nome}
-                onChange={(evento) => setNome(evento.target.value)}
+                onChange={(evento) =>
+                  setNome(evento.target.value)
+                }
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="idade-paciente">Idade</label>
+              <label htmlFor="idade-paciente">
+                Idade
+              </label>
 
               <input
                 id="idade-paciente"
                 type="number"
                 min="0"
                 value={idade}
-                onChange={(evento) => setIdade(evento.target.value)}
+                onChange={(evento) =>
+                  setIdade(evento.target.value)
+                }
               />
             </div>
 
@@ -178,36 +236,98 @@ function PatientDetails() {
         </article>
 
         <article className="patient-card cif-history-card">
-          <div className="card-heading">
-            <span className="card-eyebrow">Acompanhamento</span>
-            <h2>Histórico CIF</h2>
-            <p>
-              Classificações registradas para este paciente ao longo do tempo.
-            </p>
+          <div className="history-header">
+            <div className="card-heading">
+              <span className="card-eyebrow">
+                Acompanhamento
+              </span>
+
+              <h2>Histórico CIF</h2>
+
+              <p>
+                Classificações registradas para este paciente
+                ao longo do tempo.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="primary-action-button"
+              onClick={() =>
+                setMostrarFormulario(!mostrarFormulario)
+              }
+            >
+              {mostrarFormulario
+                ? 'Cancelar'
+                : '+ Nova classificação CIF'}
+            </button>
           </div>
 
-          <div className="empty-history">
-            <div className="empty-history-icon">CIF</div>
+          {mostrarFormulario && (
+            <ClassificationForm
+              pacienteId={id}
+              onClassificacaoCriada={classificacaoCriada}
+            />
+          )}
 
-            <h3>Nenhuma classificação registrada</h3>
+          {classificacoes.length === 0 ? (
+            <div className="empty-history">
+              <div className="empty-history-icon">
+                CIF
+              </div>
 
-            <p>
-              As classificações CIF deste paciente aparecerão aqui quando forem
-              cadastradas.
-            </p>
-          </div>
+              <h3>
+                Nenhuma classificação registrada
+              </h3>
 
-          <button
-            type="button"
-            className="primary-action-button"
-            disabled
-          >
-            + Nova classificação CIF
-          </button>
+              <p>
+                As classificações CIF deste paciente aparecerão
+                aqui quando forem cadastradas.
+              </p>
+            </div>
+          ) : (
+            <div className="classification-history">
+              {classificacoes.map((classificacao) => (
+                <article
+                  key={classificacao.id}
+                  className="classification-item"
+                >
+                  <div className="classification-top">
+                    <div>
+                      <span className="classification-code">
+                        {classificacao.codigo_cif}
+                      </span>
 
-          <p className="future-feature">
-            Funcionalidade será implementada na próxima etapa.
-          </p>
+                      <h3>
+                        Classificação CIF
+                      </h3>
+                    </div>
+
+                    <span className="qualifier-badge">
+                      Qualificador {classificacao.qualificador}
+                    </span>
+                  </div>
+
+                  <div className="classification-details">
+                    <div>
+                      <span>Data</span>
+                      <strong>
+                        {classificacao.data}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Observação</span>
+                      <strong>
+                        {classificacao.observacao ||
+                          'Sem observação'}
+                      </strong>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </article>
       </section>
     </main>
