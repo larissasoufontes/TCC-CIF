@@ -19,7 +19,6 @@ function PatientForm({ onPacienteCadastrado }) {
     })
 
     const dados = await resposta.json()
-
     console.log(dados)
 
     onPacienteCadastrado()
@@ -29,30 +28,46 @@ function PatientForm({ onPacienteCadastrado }) {
   }
 
   return (
-    <section>
-      <h2>Cadastrar paciente</h2>
+    <section className="patient-card patient-form-card">
+      <div className="card-heading">
+        <span className="card-eyebrow">Novo cadastro</span>
+        <h2>Cadastrar paciente</h2>
+        <p>
+          Preencha as informações abaixo para adicionar um novo paciente ao
+          sistema.
+        </p>
+      </div>
 
-      <form onSubmit={cadastrarPaciente}>
-        <div>
-          <label>Nome:</label>
+      <form className="patient-form" onSubmit={cadastrarPaciente}>
+        <div className="form-group">
+          <label htmlFor="nome">Nome completo</label>
+
           <input
+            id="nome"
             type="text"
             value={nome}
+            placeholder="Digite o nome do paciente"
             onChange={(evento) => setNome(evento.target.value)}
+            required
           />
         </div>
 
-        <div>
-          <label>Idade:</label>
+        <div className="form-group">
+          <label htmlFor="idade">Idade</label>
+
           <input
+            id="idade"
             type="number"
             value={idade}
+            placeholder="Ex.: 45"
+            min="0"
             onChange={(evento) => setIdade(evento.target.value)}
+            required
           />
         </div>
 
-        <button type="submit">
-          Cadastrar
+        <button className="primary-action-button" type="submit">
+          Cadastrar paciente
         </button>
       </form>
     </section>

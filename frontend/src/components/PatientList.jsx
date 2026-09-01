@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function PatientList({ atualizarLista }) {
   const [pacientes, setPacientes] = useState([])
-  const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
-
-  const [nomeEditado, setNomeEditado] = useState('')
-  const [idadeEditada, setIdadeEditada] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function buscarPacientes() {
@@ -18,106 +16,49 @@ function PatientList({ atualizarLista }) {
     buscarPacientes()
   }, [atualizarLista])
 
-  async function atualizarPacientes() {
-    const resposta = await fetch('http://127.0.0.1:8000/pacientes')
-    const dados = await resposta.json()
-
-    setPacientes(dados)
-  }
-
-  function selecionarPaciente(paciente) {
-    setPacienteSelecionado(paciente)
-
-    setNomeEditado(paciente.nome)
-    setIdadeEditada(paciente.idade)
-  }
-
-  async function editarPaciente() {
-    if (!pacienteSelecionado) {
-      return
-    }
-
-    await fetch(
-      `http://127.0.0.1:8000/pacientes/${pacienteSelecionado.id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome: nomeEditado,
-          idade: Number(idadeEditada),
-        }),
-      }
-    )
-
-    setPacienteSelecionado(null)
-
-    atualizarPacientes()
-  }
-
-  async function excluirPaciente() {
-    if (!pacienteSelecionado) {
-      return
-    }
-
-    await fetch(
-      `http://127.0.0.1:8000/pacientes/${pacienteSelecionado.id}`,
-      {
-        method: 'DELETE',
-      }
-    )
-
-    setPacienteSelecionado(null)
-
-    atualizarPacientes()
+  function abrirPaciente(pacienteId) {
+    navigate(`/sistema/pacientes/${pacienteId}`)
   }
 
   return (
-    <section>
-      <h2>Pacientes</h2>
+    <section className="patient-card patient-list-card">
+      <div className="card-heading">
+        <span className="card-eyebrow">Pacientes cadastrados</span>
 
-      {pacientes.map((paciente) => (
-        <div key={paciente.id}>
-          <button onClick={() => selecionarPaciente(paciente)}>
-            {paciente.nome}
-          </button>
-        </div>
-      ))}
+        <h2>Lista de pacientes</h2>
 
-      {pacienteSelecionado && (
-        <div>
-          <h3>Editar paciente</h3>
+        <p>
+          Selecione um paciente para visualizar seus dados e histórico CIF.
+        </p>
+      </div>
 
-          <div>
-            <label>Nome:</label>
-
-            <input
-              type="text"
-              value={nomeEditado}
-              onChange={(evento) => setNomeEditado(evento.target.value)}
-            />
+      <div className="patient-list">
+        {pacientes.length === 0 && (
+          <div className="empty-state">
+            Nenhum paciente cadastrado.
           </div>
+        )}
 
-          <div>
-            <label>Idade:</label>
+        {pacientes.map((paciente) => (
+          <button
+            key={paciente.id}
+            type="button"
+            className="patient-item"
+            onClick={() => abrirPaciente(paciente.id)}
+          >
+            <div className="patient-avatar">
+              {paciente.nome.charAt(0).toUpperCase()}
+            </div>
 
-            <input
-              type="number"
-              value={idadeEditada}
-              onChange={(evento) => setIdadeEditada(evento.target.value)}
-            />
-          </div>
+            <div className="patient-item-info">
+              <strong>{paciente.nome}</strong>
+              <span>{paciente.idade} anos</span>
+            </div>
 
-          <button onClick={editarPaciente}>
-            Salvar alterações
+            <span className="patient-arrow">›</span>
           </button>
-
-          <button onClick={excluirPaciente}>
-            Excluir paciente
-          </button>
-        </div>
-      )}
+        ))}
+      </div>
     </section>
   )
 }
