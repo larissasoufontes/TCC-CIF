@@ -7,6 +7,6 @@ class PacienteCreate(BaseModel):
 
 
 class PacienteResponse(BaseModel):
-    id: int
+    id: str
     nome: str
     idade: int

@@ -4,6 +4,7 @@ anyio==4.14.2
 click==8.4.2
 colorama==0.4.6
 fastapi==0.141.1
+psycopg2-binary==2.9.13
 h11==0.16.0
 idna==3.19
 pydantic==2.13.4
