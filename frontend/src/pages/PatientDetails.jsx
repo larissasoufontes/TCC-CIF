@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import ClassificationForm from '../components/ClassificationForm'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
+const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 function PatientDetails() {
   const { id } = useParams()

@@ -49,3 +49,13 @@ python scripts/import_who_icf.py
 
 O importador carrega o código, o componente, a categoria e a definição em português. Não coloque credenciais no Git.
 
+### Link temporário para testes
+
+Para uma demonstração até 15/09, mantenha o backend e o Vite rodando na máquina que possui o PostgreSQL e execute, em outro terminal:
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:5173
+```
+
+Compartilhe o endereço `https://*.trycloudflare.com` exibido no terminal. O link é temporário e deixa de funcionar quando o processo do túnel ou o computador for desligado. O Vite encaminha as rotas `/pacientes` para o FastAPI local.
+
