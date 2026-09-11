@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000'
+
 function ClassificationForm({ pacienteId, onClassificacaoCriada }) {
   const [codigoCif, setCodigoCif] = useState('')
   const [qualificador, setQualificador] = useState('')
@@ -13,7 +15,7 @@ function ClassificationForm({ pacienteId, onClassificacaoCriada }) {
     setErro('')
 
     const resposta = await fetch(
-      `http://127.0.0.1:8000/pacientes/${pacienteId}/classificacoes`,
+      `${API_BASE}/pacientes/${pacienteId}/classificacoes`,
       {
         method: 'POST',
         headers: {

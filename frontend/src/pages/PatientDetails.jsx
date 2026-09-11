@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import ClassificationForm from '../components/ClassificationForm'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000'
+
 function PatientDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -22,7 +24,7 @@ function PatientDetails() {
     async function carregarDados() {
       try {
         const respostaPaciente = await fetch(
-          `http://127.0.0.1:8000/pacientes/${id}`
+          `${API_BASE}/pacientes/${id}`
         )
 
         if (!respostaPaciente.ok) {
@@ -36,7 +38,7 @@ function PatientDetails() {
         setIdade(dadosPaciente.idade)
 
         const respostaClassificacoes = await fetch(
-          `http://127.0.0.1:8000/pacientes/${id}/classificacoes`
+          `${API_BASE}/pacientes/${id}/classificacoes`
         )
 
         if (!respostaClassificacoes.ok) {
@@ -59,7 +61,7 @@ function PatientDetails() {
 
   async function buscarClassificacoes() {
     const resposta = await fetch(
-      `http://127.0.0.1:8000/pacientes/${id}/classificacoes`
+      `${API_BASE}/pacientes/${id}/classificacoes`
     )
 
     const dados = await resposta.json()
@@ -69,7 +71,7 @@ function PatientDetails() {
 
   async function salvarAlteracoes() {
     const resposta = await fetch(
-      `http://127.0.0.1:8000/pacientes/${id}`,
+      `${API_BASE}/pacientes/${id}`,
       {
         method: 'PUT',
         headers: {
@@ -100,7 +102,7 @@ function PatientDetails() {
     if (!confirmar) return
 
     const resposta = await fetch(
-      `http://127.0.0.1:8000/pacientes/${id}`,
+      `${API_BASE}/pacientes/${id}`,
       {
         method: 'DELETE',
       }

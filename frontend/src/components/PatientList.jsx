@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000'
+
 function PatientList({ atualizarLista }) {
   const [pacientes, setPacientes] = useState([])
   const navigate = useNavigate()
 
   useEffect(() => {
     async function buscarPacientes() {
-      const resposta = await fetch('http://127.0.0.1:8000/pacientes')
+      const resposta = await fetch(`${API_BASE}/pacientes`)
       const dados = await resposta.json()
 
       setPacientes(dados)

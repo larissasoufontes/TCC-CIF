@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000'
+
 function PatientForm({ onPacienteCadastrado }) {
   const [nome, setNome] = useState('')
   const [idade, setIdade] = useState('')
@@ -7,7 +9,7 @@ function PatientForm({ onPacienteCadastrado }) {
   async function cadastrarPaciente(evento) {
     evento.preventDefault()
 
-    const resposta = await fetch('http://127.0.0.1:8000/pacientes', {
+    const resposta = await fetch(`${API_BASE}/pacientes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
