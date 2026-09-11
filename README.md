@@ -34,5 +34,18 @@ npm run dev
 
 O servidor rejeita uma classificação com HTTP 400 quando `codigo_cif` não existe exatamente na tabela `cif_codigo`. O repositório não contém senhas, tokens ou outros segredos.
 
-> A importação anterior feita pela API da OMS usou a linearização ICD `mms`; ela não deve ser tratada como a lista CIF `icf`. A fonte correta da CIF deve ser configurada antes de aceitar códigos curtos como `d450`.
+### Importação oficial da CIF
+
+O importador usa a ferramenta oficial da OMS e seus endpoints `codeinfo`/entidade da CIF. Informe os códigos desejados por variável de ambiente:
+
+```powershell
+Set-Location "backend"
+$env:DATABASE_URL = "postgresql://usuario:senha@127.0.0.1:5432/cifdb"
+$env:WHO_CLIENT_ID = "seu-client-id"
+$env:WHO_CLIENT_SECRET = "seu-client-secret"
+$env:WHO_ICF_CODES = "d450,b1301,e1101"
+python scripts/import_who_icf.py
+```
+
+O importador carrega o código, o componente, a categoria e a definição em português. Não coloque credenciais no Git.
 
