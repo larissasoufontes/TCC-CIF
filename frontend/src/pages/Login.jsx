@@ -1,12 +1,45 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { PERFIS, salvarSessao } from '../auth'
+
+const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 function Login() {
   const navigate = useNavigate()
 
-  function entrarNoSistema(evento) {
-    evento.preventDefault()
+  const [perfil, setPerfil] = useState('profissional')
+  const [login, setLogin] = useState('')
+  const [senha, setSenha] = useState('')
+  const [erro, setErro] = useState('')
+  const [entrando, setEntrando] = useState(false)
 
-    navigate('/sistema')
+  async function entrarNoSistema(evento) {
+    evento.preventDefault()
+    setErro('')
+    setEntrando(true)
+
+    try {
+      const resposta = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login: login.trim(), senha, perfil }),
+      })
+
+      const dados = await resposta.json().catch(() => ({}))
+
+      if (!resposta.ok) {
+        throw new Error(dados.detail || 'Não foi possível entrar.')
+      }
+
+      salvarSessao(dados)
+      navigate(PERFIS[dados.perfil].inicio)
+    } catch (erroLogin) {
+      setErro(erroLogin.message || 'Não foi possível conectar à API.')
+      setSenha('')
+    } finally {
+      setEntrando(false)
+    }
   }
 
   return (
@@ -18,18 +51,42 @@ function Login() {
           <h1>Entrar no sistema</h1>
 
           <p>
-            Informe suas credenciais para acessar a plataforma.
+            Escolha seu tipo de acesso e informe suas credenciais.
           </p>
         </div>
 
         <form className="patient-form" onSubmit={entrarNoSistema}>
+          <div
+            className="segmented-control"
+            role="group"
+            aria-label="Tipo de acesso"
+          >
+            {Object.entries(PERFIS).map(([chave, { rotulo }]) => (
+              <button
+                key={chave}
+                type="button"
+                aria-pressed={perfil === chave}
+                className={perfil === chave ? 'selected' : ''}
+                onClick={() => {
+                  setPerfil(chave)
+                  setErro('')
+                }}
+              >
+                {rotulo}
+              </button>
+            ))}
+          </div>
+
           <div className="form-group">
-            <label htmlFor="email">E-mail</label>
+            <label htmlFor="login">Usuário</label>
 
             <input
-              id="email"
-              type="email"
-              placeholder="seuemail@instituicao.com"
+              id="login"
+              type="text"
+              value={login}
+              autoComplete="username"
+              placeholder="Digite seu usuário"
+              onChange={(evento) => setLogin(evento.target.value)}
               required
             />
           </div>
@@ -40,19 +97,24 @@ function Login() {
             <input
               id="senha"
               type="password"
+              value={senha}
+              autoComplete="current-password"
               placeholder="Digite sua senha"
+              onChange={(evento) => setSenha(evento.target.value)}
               required
             />
           </div>
 
-          <button className="primary-action-button" type="submit">
-            Entrar
+          {erro && <p className="form-error" role="alert">{erro}</p>}
+
+          <button
+            className="primary-action-button"
+            type="submit"
+            disabled={entrando}
+          >
+            {entrando ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
-
-        <p className="login-warning">
-          Autenticação provisória utilizada apenas durante o desenvolvimento.
-        </p>
       </section>
     </main>
   )

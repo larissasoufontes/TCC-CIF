@@ -741,8 +741,112 @@ input {
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 7px;
 
+  background: transparent;
   color: white;
+  font: inherit;
   font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.main-nav .logout-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ADMINISTRAÇÃO DE USUÁRIOS */
+
+.user-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 14px;
+  align-items: center;
+
+  padding: 14px 16px;
+
+  border: 1px solid #e1e7e4;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.user-row-inactive {
+  background: #f6f8f7;
+}
+
+.user-row-inactive .user-row-info {
+  opacity: 0.65;
+}
+
+.user-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.user-row-info strong {
+  color: #243b32;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.user-row-info span {
+  color: #77837e;
+  font-size: 0.83rem;
+}
+
+.status-badge {
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background: #e4f0eb;
+  color: #286650;
+
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.status-badge-off {
+  background: #f1e4e4;
+  color: #8f3b3b;
+}
+
+.user-row-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-row-actions .secondary-action-button {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 0.85rem;
+}
+
+.user-row-reset {
+  grid-column: 1 / -1;
+
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-row-reset input {
+  flex: 1 1 200px;
+  min-height: 42px;
+  padding: 0 12px;
+
+  border: 1px solid #cfdad5;
+  border-radius: 8px;
+
+  background: #fbfcfc;
+  font: inherit;
+}
+
+.user-row-reset .primary-action-button {
+  min-height: 42px;
 }
 
 /* DASHBOARD */
@@ -1189,5 +1293,162 @@ input {
 
   .history-actions button {
     width: 100%;
+  }
+}
+
+.patient-search {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.patient-search label {
+  color: #30453d;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.patient-search input {
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid #cfdad5;
+  border-radius: 8px;
+  background: #fbfcfc;
+  color: #24332d;
+  font: inherit;
+}
+
+.patient-search input:focus,
+.form-group input:focus-visible {
+  outline: 2px solid rgba(55, 118, 97, 0.28);
+  outline-offset: 1px;
+}
+
+.segmented-control {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #d4dfda;
+  border-radius: 8px;
+  background: #edf3f0;
+}
+
+.segmented-control button {
+  flex: 1;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #52665d;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.segmented-control button.selected {
+  border-color: #c9d9d1;
+  background: white;
+  color: #174f3f;
+}
+
+.cif-search-results {
+  display: flex;
+  flex-direction: column;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid #d8e2dd;
+  border-radius: 8px;
+  background: white;
+}
+
+.cif-search-results button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 11px 13px;
+  border: 0;
+  border-bottom: 1px solid #edf1ef;
+  background: white;
+  color: #354940;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cif-search-results button:last-child {
+  border-bottom: 0;
+}
+
+.cif-search-results button:hover,
+.cif-search-results button.selected {
+  background: #eff6f2;
+}
+
+.cif-search-results button strong {
+  color: #174f3f;
+  font-size: 0.92rem;
+}
+
+.cif-search-results button span {
+  color: #65736d;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.search-status,
+.selected-cif-code,
+.system-date-note {
+  margin: 0;
+  color: #66736e;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.selected-cif-code {
+  padding: 10px 12px;
+  border-left: 3px solid #4f826f;
+  background: #f1f6f3;
+  overflow-wrap: anywhere;
+}
+
+.form-success {
+  margin: 0;
+  color: #286650;
+  font-size: 0.88rem;
+}
+
+.primary-action-button:disabled {
+  background: #81988e;
+  cursor: wait;
+  transform: none;
+}
+
+.classification-relations {
+  margin-top: 16px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1ef;
+}
+
+.classification-relations > span {
+  color: #4f826f;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.classification-relations p {
+  margin: 8px 0 0;
+  color: #52635b;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 520px) {
+  .segmented-control button {
+    padding-inline: 6px;
+    font-size: 0.82rem;
   }
 }

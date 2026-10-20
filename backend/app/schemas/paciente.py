@@ -10,3 +10,4 @@ class PacienteResponse(BaseModel):
     id: str
     nome: str
     idade: int
+    chave_pesquisa: str

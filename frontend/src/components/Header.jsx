@@ -1,9 +1,22 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+
+import { limparSessao, obterSessao, PERFIS } from '../auth'
 
 function Header() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const sessao = obterSessao()
 
-  const estaNaAreaRestrita = location.pathname.startsWith('/sistema')
+  const estaNaAreaRestrita =
+    sessao &&
+    (location.pathname.startsWith('/sistema') ||
+      location.pathname.startsWith('/pesquisa') ||
+      location.pathname.startsWith('/admin'))
+
+  function sair() {
+    limparSessao()
+    navigate('/')
+  }
 
   return (
     <header className="site-header">
@@ -14,21 +27,33 @@ function Header() {
 
         {estaNaAreaRestrita ? (
           <nav className="main-nav">
-            <Link to="/sistema">Início</Link>
+            {sessao.perfil === 'profissional' ? (
+              <>
+                <Link to="/sistema">Início</Link>
 
-            <Link to="/sistema/pacientes">
-              Pacientes
-            </Link>
+                <Link to="/sistema/pacientes">
+                  Pacientes
+                </Link>
+              </>
+            ) : sessao.perfil === 'pesquisador' ? (
+              <Link to="/pesquisa">Pesquisa</Link>
+            ) : (
+              <Link to="/admin">Usuários</Link>
+            )}
 
             <div className="user-area">
               <div className="user-info">
-                <strong>Usuário de teste</strong>
-                <span>Instituição de teste</span>
+                <strong>{sessao.nome}</strong>
+                <span>{PERFIS[sessao.perfil].rotulo}</span>
               </div>
 
-              <Link to="/" className="logout-link">
+              <button
+                type="button"
+                className="logout-link"
+                onClick={sair}
+              >
                 Sair
-              </Link>
+              </button>
             </div>
           </nav>
         ) : (

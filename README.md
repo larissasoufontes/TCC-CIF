@@ -10,7 +10,6 @@ O front-end usa o backend FastAPI em `http://127.0.0.1:8000`. O backend agora us
 ```powershell
 Set-Location "backend"
 $env:DATABASE_URL = "postgresql://usuario:senha@127.0.0.1:5432/cifdb"
-$env:DEFAULT_PROFISSIONAL_ID = "11111111-1111-1111-1111-111111111111"
 python -m pip install -r requirements.txt
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
@@ -33,6 +32,19 @@ npm run dev
 ```
 
 O servidor rejeita uma classificação com HTTP 400 quando `codigo_cif` não existe exatamente na tabela `cif_codigo`. O repositório não contém senhas, tokens ou outros segredos.
+
+### Autenticação e usuários
+
+As áreas de profissional de saúde, pesquisador e administrador exigem login. Não há cadastro público. Crie o primeiro administrador localmente, dentro da pasta `backend`:
+
+```powershell
+$env:DATABASE_URL = "postgresql://usuario:senha@127.0.0.1:5432/cifdb"
+python -m scripts.criar_usuario --perfil administrador --login admin
+```
+
+O comando solicita a senha no terminal e guarda somente um hash no banco. Entre pela opção **Administrador** em `/login` para criar as contas de profissionais e pesquisadores. O pesquisador consulta pacientes por uma chave aleatória, sem ver o nome; o CSV de histórico também usa essa chave e omite observações clínicas.
+
+Para manter sessões válidas após reiniciar a API, defina `AUTH_SECRET` no ambiente do servidor antes de iniciá-la. Use um valor aleatório e privado; não o salve no Git.
 
 ### Importação oficial da CIF
 

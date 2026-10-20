@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import ClassificationForm from '../components/ClassificationForm'
+import { authFetch } from '../auth'
 
 const API_BASE = import.meta.env.VITE_API_BASE || ''
+
+function formatarData(data) {
+  const [ano, mes, dia] = data.split('-')
+  return `${dia}/${mes}/${ano}`
+}
 
 function PatientDetails() {
   const { id } = useParams()
@@ -23,7 +29,7 @@ function PatientDetails() {
   useEffect(() => {
     async function carregarDados() {
       try {
-        const respostaPaciente = await fetch(
+        const respostaPaciente = await authFetch(
           `${API_BASE}/pacientes/${id}`
         )
 
@@ -37,7 +43,7 @@ function PatientDetails() {
         setNome(dadosPaciente.nome)
         setIdade(dadosPaciente.idade)
 
-        const respostaClassificacoes = await fetch(
+        const respostaClassificacoes = await authFetch(
           `${API_BASE}/pacientes/${id}/classificacoes`
         )
 
@@ -60,7 +66,7 @@ function PatientDetails() {
   }, [id])
 
   async function buscarClassificacoes() {
-    const resposta = await fetch(
+    const resposta = await authFetch(
       `${API_BASE}/pacientes/${id}/classificacoes`
     )
 
@@ -70,7 +76,7 @@ function PatientDetails() {
   }
 
   async function salvarAlteracoes() {
-    const resposta = await fetch(
+    const resposta = await authFetch(
       `${API_BASE}/pacientes/${id}`,
       {
         method: 'PUT',
@@ -101,7 +107,7 @@ function PatientDetails() {
 
     if (!confirmar) return
 
-    const resposta = await fetch(
+    const resposta = await authFetch(
       `${API_BASE}/pacientes/${id}`,
       {
         method: 'DELETE',
@@ -127,17 +133,23 @@ function PatientDetails() {
     }
 
     const cabecalho = [
+      'Chave do paciente',
       'Código CIF',
+      'Descrição CIF',
       'Qualificador',
       'Data',
-      'Observação',
+      'Relações históricas',
     ]
 
     const linhas = classificacoes.map((classificacao) => [
+      paciente.chave_pesquisa,
       classificacao.codigo_cif,
+      classificacao.descricao_pt || '',
       classificacao.qualificador,
       classificacao.data,
-      classificacao.observacao || '',
+      (classificacao.relacoes || [])
+        .map((relacao) => `${relacao.tipo}: ${relacao.codigo_cif} (${relacao.data})`)
+        .join(', '),
     ])
 
     const dadosCSV = [
@@ -167,14 +179,8 @@ function PatientDetails() {
 
     const link = document.createElement('a')
 
-    const nomeArquivo = paciente.nome
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-
     link.href = url
-    link.download = `historico_cif_${nomeArquivo}.csv`
+    link.download = `historico_cif_${paciente.chave_pesquisa}.csv`
 
     document.body.appendChild(link)
 
@@ -342,6 +348,7 @@ function PatientDetails() {
           {mostrarFormulario && (
             <ClassificationForm
               pacienteId={id}
+              classificacoes={classificacoes}
               onClassificacaoCriada={classificacaoCriada}
             />
           )}
@@ -375,7 +382,7 @@ function PatientDetails() {
                       </span>
 
                       <h3>
-                        Classificação CIF
+                        {classificacao.descricao_pt || 'Classificação CIF'}
                       </h3>
                     </div>
 
@@ -389,7 +396,7 @@ function PatientDetails() {
                       <span>Data</span>
 
                       <strong>
-                        {classificacao.data}
+                        {formatarData(classificacao.data)}
                       </strong>
                     </div>
 
@@ -402,6 +409,22 @@ function PatientDetails() {
                       </strong>
                     </div>
                   </div>
+                  {classificacao.relacoes?.length > 0 && (
+                    <div className="classification-relations">
+                      <span>Vínculos no histórico</span>
+                      {classificacao.relacoes.map((relacao) => (
+                        <p key={`${classificacao.id}-${relacao.id}`}>
+                          <strong>
+                            {relacao.tipo === 'evolucao'
+                              ? 'Evolução histórica'
+                              : 'Possível duplicidade/erro'}
+                          </strong>
+                          {' · '}{relacao.codigo_cif}, qualificador {relacao.qualificador}
+                          {' · '}{formatarData(relacao.data)}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </article>
               ))}
             </div>

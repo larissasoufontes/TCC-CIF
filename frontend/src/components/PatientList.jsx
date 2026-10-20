@@ -1,22 +1,49 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { authFetch } from '../auth'
+
 const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 function PatientList({ atualizarLista }) {
   const [pacientes, setPacientes] = useState([])
+  const [termoBusca, setTermoBusca] = useState('')
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
-    async function buscarPacientes() {
-      const resposta = await fetch(`${API_BASE}/pacientes`)
-      const dados = await resposta.json()
+    const controlador = new AbortController()
 
-      setPacientes(dados)
+    async function buscarPacientes() {
+      setCarregando(true)
+      setErro('')
+      try {
+        const resposta = await authFetch(`${API_BASE}/pacientes`, {
+          signal: controlador.signal,
+        })
+        if (!resposta.ok) throw new Error('Não foi possível carregar os pacientes.')
+        const dados = await resposta.json()
+        setPacientes(dados)
+      } catch (erroBusca) {
+        if (erroBusca.name !== 'AbortError') {
+          setErro(erroBusca.message || 'Não foi possível conectar à API.')
+        }
+      } finally {
+        if (!controlador.signal.aborted) setCarregando(false)
+      }
     }
 
     buscarPacientes()
+
+    return () => controlador.abort()
   }, [atualizarLista])
+
+  const pacientesFiltrados = pacientes.filter((paciente) =>
+    paciente.nome.toLocaleLowerCase('pt-BR').includes(
+      termoBusca.trim().toLocaleLowerCase('pt-BR'),
+    ),
+  )
 
   function abrirPaciente(pacienteId) {
     navigate(`/sistema/pacientes/${pacienteId}`)
@@ -34,14 +61,30 @@ function PatientList({ atualizarLista }) {
         </p>
       </div>
 
+      <div className="patient-search">
+        <label htmlFor="busca-paciente">Buscar paciente</label>
+        <input
+          id="busca-paciente"
+          type="search"
+          value={termoBusca}
+          placeholder="Digite o nome"
+          onChange={(evento) => setTermoBusca(evento.target.value)}
+        />
+      </div>
+
       <div className="patient-list">
-        {pacientes.length === 0 && (
+        {carregando && <p className="search-status">Carregando pacientes...</p>}
+        {erro && <p className="form-error" role="alert">{erro}</p>}
+        {!carregando && !erro && pacientes.length === 0 && (
           <div className="empty-state">
             Nenhum paciente cadastrado.
           </div>
         )}
+        {!carregando && !erro && pacientes.length > 0 && pacientesFiltrados.length === 0 && (
+          <div className="empty-state">Nenhum paciente corresponde à busca.</div>
+        )}
 
-        {pacientes.map((paciente) => (
+        {pacientesFiltrados.map((paciente) => (
           <button
             key={paciente.id}
             type="button"

@@ -39,7 +39,51 @@ CREATE TABLE IF NOT EXISTS classificacao_cif (
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE classificacao_cif
+    ALTER COLUMN created_at SET DEFAULT now();
+
 CREATE INDEX IF NOT EXISTS idx_classificacao_paciente
     ON classificacao_cif (paciente_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_cif_codigo_descricao
     ON cif_codigo USING gin (to_tsvector('simple', descricao_pt));
+
+CREATE TABLE IF NOT EXISTS classificacao_cif_relacao (
+    classificacao_a_id uuid NOT NULL
+        REFERENCES classificacao_cif(id) ON DELETE CASCADE,
+    classificacao_b_id uuid NOT NULL
+        REFERENCES classificacao_cif(id) ON DELETE CASCADE,
+    tipo varchar(20) NOT NULL CHECK (tipo IN ('duplicidade', 'evolucao')),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (classificacao_a_id, classificacao_b_id),
+    CHECK (classificacao_a_id < classificacao_b_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_classificacao_relacao_b
+    ON classificacao_cif_relacao (classificacao_b_id);
+
+-- Chave aleatória usada no lugar do nome na área do pesquisador.
+ALTER TABLE paciente
+    ADD COLUMN IF NOT EXISTS chave_pesquisa text NOT NULL
+    DEFAULT 'P-' || upper(encode(gen_random_bytes(6), 'hex'));
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_paciente_chave_pesquisa
+    ON paciente (chave_pesquisa);
+
+CREATE TABLE IF NOT EXISTS usuario (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    login text NOT NULL,
+    senha_hash text NOT NULL,
+    perfil text NOT NULL CHECK (perfil IN ('profissional', 'pesquisador', 'administrador')),
+    profissional_id uuid REFERENCES profissional(id) ON DELETE RESTRICT,
+    ativo boolean NOT NULL DEFAULT true,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    CHECK (perfil <> 'profissional' OR profissional_id IS NOT NULL)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuario_login
+    ON usuario (lower(login));
+
+-- Bancos criados antes do perfil administrador precisam desta troca de constraint.
+ALTER TABLE usuario DROP CONSTRAINT IF EXISTS usuario_perfil_check;
+ALTER TABLE usuario ADD CONSTRAINT usuario_perfil_check
+    CHECK (perfil IN ('profissional', 'pesquisador', 'administrador'));

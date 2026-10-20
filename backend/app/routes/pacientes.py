@@ -1,16 +1,17 @@
 from datetime import date
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.auth import SOMENTE_PROFISSIONAL
 from app.db import get_conn
 from app.schemas.paciente import PacienteCreate, PacienteResponse
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(SOMENTE_PROFISSIONAL)])
 
 def patient_query():
     return '''
-        SELECT id::text AS id, nome,
+        SELECT id::text AS id, nome, chave_pesquisa,
                EXTRACT(YEAR FROM age(CURRENT_DATE, data_nascimento))::int AS idade
         FROM paciente
     '''
