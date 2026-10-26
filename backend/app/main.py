@@ -1,8 +1,11 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.admin import router as admin_router
 from app.routes.auth import router as auth_router
+from app.routes.cadastro import router as cadastro_router
+from app.routes.solicitacoes import router as solicitacoes_router
 from app.routes.pacientes import router as pacientes_router
 from app.routes.pesquisa import router as pesquisa_router
 from app.routes.classificacoes import (
@@ -28,7 +31,9 @@ app.add_middleware(
 
 
 app.include_router(auth_router)
+app.include_router(cadastro_router)
 app.include_router(admin_router)
+app.include_router(solicitacoes_router)
 app.include_router(pacientes_router)
 app.include_router(pesquisa_router)
 app.include_router(classificacoes_router)
