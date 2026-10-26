@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+const API_BASE = import.meta.env.VITE_API_BASE || ''
+
 const FORMULARIO_INICIAL = {
   perfil: 'profissional',
   nome: '',
@@ -18,18 +20,18 @@ const FORMULARIO_INICIAL = {
 function Cadastro() {
   const [formulario, setFormulario] = useState(FORMULARIO_INICIAL)
   const [erro, setErro] = useState('')
-  const [enviado, setEnviado] = useState(false)
+  const [sucesso, setSucesso] = useState(false)
+  const [enviando, setEnviando] = useState(false)
 
   function alterarCampo(campo, valor) {
     setFormulario((atual) => ({
       ...atual,
       [campo]: valor,
     }))
-
     setErro('')
   }
 
-  function enviarCadastro(evento) {
+  async function enviarCadastro(evento) {
     evento.preventDefault()
     setErro('')
 
@@ -60,61 +62,106 @@ function Cadastro() {
       return
     }
 
-    // PROTÓTIPO:
-    // Nenhum dado é enviado ao backend ou armazenado.
-    // A integração com a API e o fluxo de aprovação
-    // serão implementados posteriormente.
+    const dadosCadastro = {
+      perfil: formulario.perfil,
+      nome: formulario.nome.trim(),
+      usuario,
+      email: formulario.email.trim(),
+      instituicao: formulario.instituicao.trim(),
+      senha: formulario.senha,
+      conselho:
+        formulario.perfil === 'profissional'
+          ? formulario.conselho.trim()
+          : null,
+      registro:
+        formulario.perfil === 'profissional'
+          ? formulario.registro.trim()
+          : null,
+      especialidade:
+        formulario.perfil === 'profissional'
+          ? formulario.especialidade.trim() || null
+          : null,
+    }
 
-    setEnviado(true)
+    setEnviando(true)
+
+    try {
+      const resposta = await fetch(`${API_BASE}/auth/cadastro`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dadosCadastro),
+      })
+
+      const dados = await resposta.json().catch(() => ({}))
+
+      if (!resposta.ok) {
+        if (resposta.status === 503) {
+          throw new Error(
+            'O cadastro ainda não está disponível. A integração com o banco de dados está em desenvolvimento.'
+          )
+        }
+
+        const mensagem =
+          typeof dados.detail === 'string'
+            ? dados.detail
+            : 'Não foi possível enviar a solicitação.'
+
+        throw new Error(mensagem)
+      }
+
+      if (
+        resposta.status !== 202 ||
+        dados.status_acesso !== 'pendente'
+      ) {
+        throw new Error(
+          'A API retornou uma resposta inesperada. Não foi possível confirmar o cadastro.'
+        )
+      }
+
+      setFormulario(FORMULARIO_INICIAL)
+      setSucesso(true)
+    } catch (erroCadastro) {
+      if (erroCadastro instanceof TypeError) {
+        setErro(
+          'Não foi possível conectar ao servidor. Verifique se o backend está funcionando.'
+        )
+      } else {
+        setErro(
+          erroCadastro.message ||
+            'Não foi possível enviar a solicitação.'
+        )
+      }
+    } finally {
+      setEnviando(false)
+    }
   }
 
-  if (enviado) {
+  if (sucesso) {
     return (
       <main className="login-page">
         <section className="login-card">
           <div className="card-heading">
             <span className="card-eyebrow">
-              Protótipo de cadastro
+              Solicitação recebida
             </span>
 
-            <h1>Cadastro preenchido!</h1>
+            <h1>Cadastro aguardando aprovação</h1>
 
             <p>
-              O formulário de solicitação foi preenchido
-              corretamente.
-            </p>
-
-            <p>
-              No sistema completo, sua solicitação ficará
-              pendente até ser analisada por um administrador.
-              Após a aprovação, será possível acessar a área
-              correspondente ao seu perfil.
+              Sua solicitação foi recebida pelo sistema e
+              está aguardando análise do administrador.
             </p>
 
             <p>
-              Esta é uma demonstração. Nenhum cadastro foi
-              enviado ou salvo no banco de dados.
+              O acesso será liberado somente depois
+              da aprovação.
             </p>
-          </div>
 
-          <div style={{ display: 'grid', gap: '12px' }}>
-            <button
-              type="button"
-              className="primary-action-button"
-              onClick={() => {
-                setFormulario(FORMULARIO_INICIAL)
-                setEnviado(false)
-                setErro('')
-              }}
-            >
-              Simular outro cadastro
-            </button>
-
-            <p style={{ textAlign: 'center' }}>
-              <Link to="/login">
-                Voltar para o login
-              </Link>
-            </p>
+            <Link to="/login">
+              Voltar para o login
+            </Link>
           </div>
         </section>
       </main>
@@ -133,7 +180,7 @@ function Cadastro() {
 
           <p>
             Preencha seus dados para solicitar acesso ao Sistema CIF.
-            O cadastro ficará sujeito à aprovação de um administrador.
+            A solicitação será analisada por um administrador.
           </p>
         </div>
 
@@ -329,7 +376,10 @@ function Cadastro() {
               autoComplete="new-password"
               placeholder="Digite a senha novamente"
               onChange={(evento) =>
-                alterarCampo('confirmarSenha', evento.target.value)
+                alterarCampo(
+                  'confirmarSenha',
+                  evento.target.value
+                )
               }
               required
             />
@@ -344,8 +394,11 @@ function Cadastro() {
           <button
             className="primary-action-button"
             type="submit"
+            disabled={enviando}
           >
-            Simular solicitação de cadastro
+            {enviando
+              ? 'Enviando...'
+              : 'Solicitar cadastro'}
           </button>
 
           <p style={{ textAlign: 'center', marginTop: '12px' }}>
