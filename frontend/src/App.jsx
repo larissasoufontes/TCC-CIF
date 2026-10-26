@@ -5,11 +5,13 @@ import RotaProtegida from './components/RotaProtegida'
 
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Cadastro from './pages/Cadastro'
 import Dashboard from './pages/Dashboard'
 import Patients from './pages/Patients'
 import PatientDetails from './pages/PatientDetails'
 import Research from './pages/Research'
 import Admin from './pages/Admin'
+
 
 function App() {
   return (
@@ -25,6 +27,10 @@ function App() {
         <Route
           path="/login"
           element={<Login />}
+        />
+        <Route 
+          path="/cadastro" 
+          element={<Cadastro />} 
         />
 
         <Route

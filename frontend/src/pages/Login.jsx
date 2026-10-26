@@ -1,5 +1,6 @@
+
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { PERFIS, salvarSessao } from '../auth'
 
@@ -54,7 +55,7 @@ function Login() {
             Escolha seu tipo de acesso e informe suas credenciais.
           </p>
         </div>
-
+        
         <form className="patient-form" onSubmit={entrarNoSistema}>
           <div
             className="segmented-control"
@@ -105,7 +106,11 @@ function Login() {
             />
           </div>
 
-          {erro && <p className="form-error" role="alert">{erro}</p>}
+          {erro && (
+            <p className="form-error" role="alert">
+              {erro}
+            </p>
+          )}
 
           <button
             className="primary-action-button"
@@ -114,6 +119,20 @@ function Login() {
           >
             {entrando ? 'Entrando...' : 'Entrar'}
           </button>
+
+          <p style={{ textAlign: 'center', marginTop: '16px' }}>
+            Ainda não possui uma conta?{' '}
+            <Link
+              to="/cadastro"
+              style={{
+                color: '#176b53',
+                fontWeight: '600',
+                textDecoration: 'underline',
+              }}
+            >
+              Criar conta
+            </Link>
+          </p>
         </form>
       </section>
     </main>

@@ -1,3 +1,4 @@
+
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { limparSessao, obterSessao, PERFIS } from '../auth'
@@ -62,6 +63,18 @@ function Header() {
 
             <Link to="/login" className="login-link">
               Entrar
+            </Link>
+
+            <Link
+              to="/cadastro"
+              className="login-link"
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#184d3d',
+                fontWeight: '600',
+              }}
+            >
+              Criar conta
             </Link>
           </nav>
         )}
