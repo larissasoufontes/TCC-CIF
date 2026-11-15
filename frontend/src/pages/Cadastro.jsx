@@ -97,12 +97,6 @@ function Cadastro() {
       const dados = await resposta.json().catch(() => ({}))
 
       if (!resposta.ok) {
-        if (resposta.status === 503) {
-          throw new Error(
-            'O cadastro ainda não está disponível. A integração com o banco de dados está em desenvolvimento.'
-          )
-        }
-
         const mensagem =
           typeof dados.detail === 'string'
             ? dados.detail

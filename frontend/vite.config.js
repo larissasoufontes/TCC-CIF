@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
-    allowedHosts: true,
+    allowedHosts: ['.trycloudflare.com'],
     proxy: {
       '/pacientes': 'http://127.0.0.1:8000',
       '/cif': 'http://127.0.0.1:8000',

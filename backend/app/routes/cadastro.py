@@ -31,14 +31,12 @@ def solicitar_cadastro(dados: CadastroSolicitacao):
     analisadas por um administrador.
     """
 
-    # A gravação permanece desativada até a Larissa
-    # aplicar e validar a migração do banco.
     if os.getenv('CADASTRO_PERSISTENCIA_ATIVA') != 'true':
         raise HTTPException(
             status_code=503,
             detail=(
-                'O recebimento de cadastros ainda não está '
-                'habilitado. Nenhuma solicitação foi salva.'
+                'O cadastro está temporariamente indisponível. '
+                'Nenhuma solicitação foi salva.'
             ),
         )
 
