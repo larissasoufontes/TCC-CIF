@@ -2,7 +2,7 @@
 .venv/
 venv/
 __pycache__/
-*.pyc
+*.py[cod]
 
 # Variáveis de ambiente
 .env
@@ -16,3 +16,5 @@ dist/
 # Sistema
 .DS_Store
 Thumbs.db
+.vscode/
+/frontend-repo/
