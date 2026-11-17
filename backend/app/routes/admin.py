@@ -3,7 +3,7 @@ from uuid import UUID
 
 import psycopg2.errors
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 from app.auth import SOMENTE_ADMIN, gerar_hash
 from app.db import get_conn
@@ -17,6 +17,7 @@ router = APIRouter(
 
 class UsuarioCreate(BaseModel):
     login: str = Field(min_length=3, max_length=60, pattern=r'^[A-Za-z0-9._-]+$')
+    email: EmailStr
     senha: str = Field(min_length=8, max_length=200)
     perfil: Literal['profissional', 'pesquisador', 'administrador']
     nome: str | None = Field(default=None, max_length=200)
@@ -42,16 +43,21 @@ class SenhaUpdate(BaseModel):
     senha: str = Field(min_length=8, max_length=200)
 
 
+class EmailUpdate(BaseModel):
+    email: EmailStr
+
+
 class UsuarioResponse(BaseModel):
     id: str
     login: str
+    email: str | None = None
     perfil: str
     nome: str | None
     ativo: bool
 
 
 CONSULTA = '''
-    SELECT u.id::text AS id, u.login, u.perfil, p.nome, u.ativo
+    SELECT u.id::text AS id, u.login, u.email, u.perfil, p.nome, u.ativo
     FROM usuario u
     LEFT JOIN profissional p ON p.id = u.profissional_id
 '''
@@ -83,16 +89,46 @@ def criar_usuario(dados: UsuarioCreate):
 
                 cur.execute(
                     '''
-                    INSERT INTO usuario (login, senha_hash, perfil, profissional_id)
-                    VALUES (%s, %s, %s, %s) RETURNING id::text AS id
+                    INSERT INTO usuario (login, email, senha_hash, perfil, profissional_id)
+                    VALUES (%s, %s, %s, %s, %s) RETURNING id::text AS id
                     ''',
-                    (dados.login, gerar_hash(dados.senha), dados.perfil, profissional_id),
+                    (
+                        dados.login,
+                        str(dados.email).strip().lower(),
+                        gerar_hash(dados.senha),
+                        dados.perfil,
+                        profissional_id,
+                    ),
                 )
                 novo_id = cur.fetchone()['id']
                 cur.execute(CONSULTA + ' WHERE u.id = %s', (novo_id,))
                 return cur.fetchone()
     except psycopg2.errors.UniqueViolation:
-        raise HTTPException(status_code=409, detail='Já existe um usuário com esse login')
+        raise HTTPException(
+            status_code=409,
+            detail='Já existe uma conta com esse login ou e-mail',
+        )
+
+
+@router.put('/{usuario_id}/email', response_model=UsuarioResponse)
+def atualizar_email(usuario_id: UUID, dados: EmailUpdate):
+    try:
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'UPDATE usuario SET email = %s WHERE id = %s',
+                    (str(dados.email).strip().lower(), str(usuario_id)),
+                )
+                if cur.rowcount == 0:
+                    raise HTTPException(status_code=404, detail='Usuário não encontrado')
+                cur.execute(
+                    'DELETE FROM password_reset_token WHERE usuario_id = %s',
+                    (str(usuario_id),),
+                )
+                cur.execute(CONSULTA + ' WHERE u.id = %s', (str(usuario_id),))
+                return cur.fetchone()
+    except psycopg2.errors.UniqueViolation:
+        raise HTTPException(status_code=409, detail='Esse e-mail já está associado a outra conta')
 
 
 @router.patch('/{usuario_id}/ativo', response_model=UsuarioResponse)
@@ -126,3 +162,7 @@ def redefinir_senha(usuario_id: UUID, dados: SenhaUpdate):
             )
             if cur.rowcount == 0:
                 raise HTTPException(status_code=404, detail='Usuário não encontrado')
+            cur.execute(
+                'DELETE FROM password_reset_token WHERE usuario_id = %s',
+                (str(usuario_id),),
+            )

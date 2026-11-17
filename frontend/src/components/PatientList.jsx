@@ -97,7 +97,11 @@ function PatientList({ atualizarLista }) {
 
             <div className="patient-item-info">
               <strong>{paciente.nome}</strong>
-              <span>{paciente.idade} anos</span>
+              <span>
+                {paciente.idade == null
+                  ? 'Idade não informada'
+                  : `${paciente.idade} anos`}
+              </span>
             </div>
 
             <span className="patient-arrow">›</span>

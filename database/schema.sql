@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS profissional (
 CREATE TABLE IF NOT EXISTS paciente (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     nome varchar(200) NOT NULL,
-    data_nascimento date NOT NULL,
-    sexo varchar(1) NOT NULL DEFAULT 'O' CHECK (sexo IN ('M', 'F', 'O')),
-    municipio varchar(120) NOT NULL DEFAULT 'Nao informado',
-    estado varchar(2) NOT NULL DEFAULT 'SP',
+    data_nascimento date,
+    sexo varchar(1) NOT NULL DEFAULT 'N' CHECK (sexo IN ('M', 'F', 'O', 'N')),
+    municipio varchar(120) NOT NULL DEFAULT 'Não informado',
+    estado varchar(20) NOT NULL DEFAULT 'Não informado',
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -72,6 +72,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_paciente_chave_pesquisa
 CREATE TABLE IF NOT EXISTS usuario (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     login text NOT NULL,
+    email text,
     senha_hash text NOT NULL,
     perfil text NOT NULL CHECK (perfil IN ('profissional', 'pesquisador', 'administrador')),
     profissional_id uuid REFERENCES profissional(id) ON DELETE RESTRICT,
@@ -82,6 +83,19 @@ CREATE TABLE IF NOT EXISTS usuario (
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_usuario_login
     ON usuario (lower(login));
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_usuario_email
+    ON usuario (lower(email)) WHERE email IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS password_reset_token (
+    token_hash char(64) PRIMARY KEY,
+    usuario_id uuid NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+    expires_at timestamptz NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_password_reset_token_usuario
+    ON password_reset_token (usuario_id);
 
 -- Bancos criados antes do perfil administrador precisam desta troca de constraint.
 ALTER TABLE usuario DROP CONSTRAINT IF EXISTS usuario_perfil_check;

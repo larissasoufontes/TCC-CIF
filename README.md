@@ -48,6 +48,28 @@ O comando solicita a senha no terminal e guarda somente um hash no banco. Entre 
 
 Use um `AUTH_SECRET` aleatório e privado para manter sessões válidas após reiniciar a API. Não salve segredos no GitHub. Façam backup antes de mudanças no schema e usem somente dados fictícios durante os testes.
 
+O cadastro de pacientes exige nome, data de nascimento exata, sexo, município e UF. Na opção de sexo, `N` significa “Não informado”. Na edição de pacientes antigos sem nascimento conhecido, complete a data exata antes de salvar.
+
+### Importação de pacientes
+
+Na área profissional **Pacientes**, baixe o modelo CSV. As colunas permitidas são exatamente `nome`, `data_nascimento`, `sexo`, `municipio` e `estado`; use sexo `M`, `F`, `O` ou `N`, UF brasileira de duas letras ou `Não informado`, e data em `AAAA-MM-DD` ou `DD/MM/AAAA`. CSVs antigos com idade em vez de data de nascimento não são aceitos para evitar criar datas estimadas. Exportações brutas de prontuários eletrônicos não são compatíveis: mapeie e revise os dados fora do sistema e remova identificadores e campos clínicos antes de montar o modelo. Cada linha válida cria um novo paciente.
+
+Ao aplicar a migration `005_dados_demograficos_paciente.sql`, registros que ainda tenham exatamente os defaults antigos (`O`, município “Não informado” e estado `SP`) passam a indicar sexo, localidade e nascimento desconhecidos. Outros valores existentes são preservados.
+
+Na área de pesquisa, o componente CIF e o prefixo do código filtram o histórico da chave selecionada. Um prefixo inclui seus subníveis (por exemplo, `d4` inclui `d450`). As estatísticas geográficas agregam pacientes e classificações por município/UF sem expor chaves; grupos com menos de cinco pacientes são omitidos. O CSV geral anonimizado respeita os filtros CIF e contém chave de pesquisa, faixa etária, código, descrição, qualificador, data e relações; não inclui nomes nem observações clínicas.
+
+### Recuperação de senha por e-mail
+
+As contas novas precisam de um e-mail validado pelo administrador. Para contas existentes, o administrador deve usar **Atualizar e-mail** no painel. A recuperação envia um link de uso único, válido por 30 minutos.
+
+Depois de atualizar o código, aplique as migrations como administrador do PostgreSQL, a partir da raiz `frontend-repo`:
+
+```powershell
+.\backend\aplicar-permissoes.ps1
+```
+
+Configure no `backend/.env` `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`, `SMTP_USE_TLS` e `FRONTEND_URL`. `FRONTEND_URL` deve ser o endereço público usado pela pessoa para abrir o site. Sem SMTP configurado, o formulário informa que a recuperação está temporariamente indisponível. Nunca envie credenciais SMTP ao GitHub.
+
 ### Importação oficial da CIF
 
 O importador usa a ferramenta oficial da OMS e seus endpoints `codeinfo`/entidade da CIF. Informe os códigos desejados por variáveis de ambiente:

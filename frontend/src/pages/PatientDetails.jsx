@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import ClassificationForm from '../components/ClassificationForm'
+import { useToast } from '../components/toastContext'
+import { ESTADOS_BRASILEIROS } from '../data/estados'
 import { authFetch } from '../auth'
 
 const API_BASE = import.meta.env.VITE_API_BASE || ''
@@ -14,17 +16,22 @@ function formatarData(data) {
 function PatientDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const mostrarToast = useToast()
 
   const [paciente, setPaciente] = useState(null)
 
   const [nome, setNome] = useState('')
-  const [idade, setIdade] = useState('')
+  const [dataNascimento, setDataNascimento] = useState('')
+  const [sexo, setSexo] = useState('')
+  const [municipio, setMunicipio] = useState('')
+  const [estado, setEstado] = useState('')
 
   const [classificacoes, setClassificacoes] = useState([])
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
 
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
+  const hoje = new Date().toISOString().slice(0, 10)
 
   useEffect(() => {
     async function carregarDados() {
@@ -41,7 +48,10 @@ function PatientDetails() {
 
         setPaciente(dadosPaciente)
         setNome(dadosPaciente.nome)
-        setIdade(dadosPaciente.idade)
+        setDataNascimento(dadosPaciente.data_nascimento || '')
+        setSexo(dadosPaciente.sexo || 'N')
+        setMunicipio(dadosPaciente.municipio || 'Não informado')
+        setEstado(dadosPaciente.estado || 'Não informado')
 
         const respostaClassificacoes = await authFetch(
           `${API_BASE}/pacientes/${id}/classificacoes`
@@ -84,8 +94,11 @@ function PatientDetails() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nome: nome,
-          idade: Number(idade),
+          nome: nome.trim(),
+          data_nascimento: dataNascimento,
+          sexo,
+          municipio: municipio.trim(),
+          estado,
         }),
       }
     )
@@ -98,6 +111,7 @@ function PatientDetails() {
     const dados = await resposta.json()
 
     setPaciente(dados)
+    mostrarToast()
   }
 
   async function excluirPaciente() {
@@ -271,19 +285,62 @@ function PatientDetails() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="idade-paciente">
-                Idade
-              </label>
-
+              <label htmlFor="data-nascimento-paciente">Data de nascimento</label>
               <input
-                id="idade-paciente"
-                type="number"
-                min="0"
-                value={idade}
-                onChange={(evento) =>
-                  setIdade(evento.target.value)
-                }
+                id="data-nascimento-paciente"
+                type="date"
+                max={hoje}
+                value={dataNascimento}
+                onChange={(evento) => setDataNascimento(evento.target.value)}
+                required
               />
+              {!dataNascimento && (
+                <small>Data não informada. Preencha a data exata antes de salvar.</small>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="sexo-paciente">Sexo</label>
+              <select
+                id="sexo-paciente"
+                value={sexo}
+                onChange={(evento) => setSexo(evento.target.value)}
+                required
+              >
+                <option value="">Selecione</option>
+                <option value="F">Feminino</option>
+                <option value="M">Masculino</option>
+                <option value="O">Outro</option>
+                <option value="N">Não informado</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="municipio-paciente">Município</label>
+              <input
+                id="municipio-paciente"
+                type="text"
+                value={municipio}
+                maxLength="120"
+                onChange={(evento) => setMunicipio(evento.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="estado-paciente">Estado (UF)</label>
+              <select
+                id="estado-paciente"
+                value={estado}
+                onChange={(evento) => setEstado(evento.target.value)}
+                required
+              >
+                <option value="">Selecione</option>
+                {ESTADOS_BRASILEIROS.map((uf) => (
+                  <option key={uf} value={uf}>{uf}</option>
+                ))}
+                <option value="Não informado">Não informado</option>
+              </select>
             </div>
 
             <div className="patient-actions">

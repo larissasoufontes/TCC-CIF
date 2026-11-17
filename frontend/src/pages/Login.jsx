@@ -104,6 +104,7 @@ function Login() {
               onChange={(evento) => setSenha(evento.target.value)}
               required
             />
+            <Link to="/recuperar-senha">Esqueceu a senha?</Link>
           </div>
 
           {erro && (

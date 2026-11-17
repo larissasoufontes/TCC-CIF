@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { authFetch } from '../auth'
+import { useToast } from './toastContext'
 
 const API_BASE = import.meta.env.VITE_API_BASE || ''
 
@@ -21,7 +22,7 @@ function ClassificationForm({
   const [tipoRelacao, setTipoRelacao] = useState('evolucao')
   const [erro, setErro] = useState('')
   const [salvando, setSalvando] = useState(false)
-  const [sucesso, setSucesso] = useState('')
+  const mostrarToast = useToast()
 
   useEffect(() => {
     const termo = termoBusca.trim()
@@ -68,7 +69,6 @@ function ClassificationForm({
   async function salvarClassificacao(evento) {
     evento.preventDefault()
     setErro('')
-    setSucesso('')
     setSalvando(true)
 
     try {
@@ -101,7 +101,7 @@ function ClassificationForm({
       setQualificador('')
       setObservacao('')
       setClassificacaoRelacionadaId('')
-      setSucesso('Classificação registrada no histórico.')
+      mostrarToast()
       onClassificacaoCriada()
     } catch (erroCadastro) {
       setErro(erroCadastro.message)
@@ -156,7 +156,13 @@ function ClassificationForm({
             type="search"
             value={termoBusca}
             placeholder={modoBusca === 'codigo' ? 'Ex.: d450' : 'Ex.: caminhar'}
-            onChange={(evento) => setTermoBusca(evento.target.value)}
+            onChange={(evento) =>
+              setTermoBusca(
+                modoBusca === 'codigo'
+                  ? evento.target.value.toLowerCase()
+                  : evento.target.value,
+              )
+            }
             autoComplete="off"
           />
           {buscando && <p className="search-status">Pesquisando códigos...</p>}
@@ -263,8 +269,6 @@ function ClassificationForm({
             {erro}
           </p>
         )}
-        {sucesso && <p className="form-success" role="status">{sucesso}</p>}
-
         <button
           type="submit"
           className="primary-action-button"

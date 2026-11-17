@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import { authFetch } from '../auth'
+import { useToast } from './toastContext'
 
 const API_BASE = import.meta.env.VITE_API_BASE || ''
 
@@ -25,6 +26,7 @@ async function obterMensagemErro(resposta) {
 }
 
 function SolicitacoesCadastro() {
+  const mostrarToast = useToast()
   const [solicitacoes, setSolicitacoes] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [processandoId, setProcessandoId] = useState(null)
@@ -142,6 +144,7 @@ function SolicitacoesCadastro() {
             ? 'Solicitação aprovada.'
             : 'Solicitação rejeitada.')
       )
+      mostrarToast()
 
       await carregarSolicitacoes()
     } catch (erroRequisicao) {

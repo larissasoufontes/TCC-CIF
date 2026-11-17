@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import { authFetch } from '../auth'
+import { useToast } from '../components/toastContext'
 import SolicitacoesCadastro from '../components/SolicitacoesCadastro'
 
 const API_BASE = import.meta.env.VITE_API_BASE || ''
@@ -14,6 +15,7 @@ const ROTULOS = {
 
 const FORMULARIO_VAZIO = {
   login: '',
+  email: '',
   senha: '',
   perfil: 'profissional',
   nome: '',
@@ -29,6 +31,7 @@ async function lerErro(resposta, padrao) {
 }
 
 function Admin() {
+  const mostrarToast = useToast()
   const [usuarios, setUsuarios] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erroLista, setErroLista] = useState('')
@@ -41,6 +44,9 @@ function Admin() {
   const [redefinindoId, setRedefinindoId] = useState('')
   const [novaSenha, setNovaSenha] = useState('')
   const [erroLinha, setErroLinha] = useState('')
+  const [emailEditandoId, setEmailEditandoId] = useState('')
+  const [emailUsuario, setEmailUsuario] = useState('')
+  const [sucessoLinha, setSucessoLinha] = useState('')
 
   async function carregarUsuarios() {
     try {
@@ -89,6 +95,7 @@ function Admin() {
 
     const corpo = {
       login: formulario.login.trim(),
+      email: formulario.email.trim(),
       senha: formulario.senha,
       perfil: formulario.perfil,
       ...(formulario.perfil === 'profissional' && {
@@ -112,6 +119,7 @@ function Admin() {
       }
 
       setSucesso(`Usuário "${corpo.login}" criado.`)
+      mostrarToast()
       setFormulario(FORMULARIO_VAZIO)
       await carregarUsuarios()
     } catch (erro) {
@@ -169,8 +177,41 @@ function Admin() {
       }
 
       setSucesso(`Senha de "${usuario.login}" redefinida.`)
+      mostrarToast()
       setRedefinindoId('')
       setNovaSenha('')
+    } catch (erro) {
+      setErroLinha(erro.message || 'Não foi possível conectar à API.')
+    }
+  }
+
+  async function atualizarEmail(evento, usuario) {
+    evento.preventDefault()
+    setErroLinha('')
+    setSucessoLinha('')
+
+    try {
+      const resposta = await authFetch(
+        `${API_BASE}/admin/usuarios/${usuario.id}/email`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailUsuario.trim() }),
+        }
+      )
+
+      if (!resposta.ok) {
+        setErroLinha(
+          await lerErro(resposta, 'Não foi possível atualizar o e-mail.')
+        )
+        return
+      }
+
+      setEmailEditandoId('')
+      setEmailUsuario('')
+      setSucessoLinha(`E-mail de "${usuario.login}" atualizado.`)
+      mostrarToast()
+      await carregarUsuarios()
     } catch (erro) {
       setErroLinha(erro.message || 'Não foi possível conectar à API.')
     }
@@ -215,6 +256,11 @@ function Admin() {
               {erroLinha}
             </p>
           )}
+          {sucessoLinha && (
+            <p className="form-success" role="status">
+              {sucessoLinha}
+            </p>
+          )}
 
           <div className="patient-list">
             {!carregando && !erroLista && usuarios.length === 0 && (
@@ -239,6 +285,7 @@ function Admin() {
                     {ROTULOS[usuario.perfil]}
                     {usuario.nome ? ` · ${usuario.nome}` : ''}
                   </span>
+                  <span>{usuario.email || 'E-mail não cadastrado'}</span>
                 </div>
 
                 <span
@@ -264,6 +311,21 @@ function Admin() {
                     type="button"
                     className="secondary-action-button"
                     onClick={() => {
+                      setEmailEditandoId(
+                        emailEditandoId === usuario.id ? '' : usuario.id
+                      )
+                      setEmailUsuario(usuario.email || '')
+                      setErroLinha('')
+                      setSucessoLinha('')
+                    }}
+                  >
+                    Atualizar e-mail
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-action-button"
+                    onClick={() => {
                       setRedefinindoId(
                         redefinindoId === usuario.id ? '' : usuario.id
                       )
@@ -274,6 +336,26 @@ function Admin() {
                     Redefinir senha
                   </button>
                 </div>
+
+                {emailEditandoId === usuario.id && (
+                  <form
+                    className="user-row-reset"
+                    onSubmit={(evento) => atualizarEmail(evento, usuario)}
+                  >
+                    <input
+                      type="email"
+                      value={emailUsuario}
+                      autoComplete="email"
+                      placeholder="E-mail validado do usuário"
+                      aria-label={`E-mail de ${usuario.login}`}
+                      onChange={(evento) => setEmailUsuario(evento.target.value)}
+                      required
+                    />
+                    <button type="submit" className="primary-action-button">
+                      Salvar e-mail
+                    </button>
+                  </form>
+                )}
 
                 {redefinindoId === usuario.id && (
                   <form
@@ -359,6 +441,20 @@ function Admin() {
                 autoComplete="off"
                 onChange={(evento) =>
                   alterarCampo('login', evento.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="novo-email">E-mail validado do usuário</label>
+              <input
+                id="novo-email"
+                type="email"
+                value={formulario.email}
+                autoComplete="email"
+                onChange={(evento) =>
+                  alterarCampo('email', evento.target.value)
                 }
                 required
               />

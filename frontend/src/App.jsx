@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Header from './components/Header'
 import RotaProtegida from './components/RotaProtegida'
+import { ToastProvider } from './components/Toast'
 
 import Home from './pages/Home'
 import Login from './pages/Login'
+import PasswordReset from './pages/PasswordReset'
 import Cadastro from './pages/Cadastro'
 import Dashboard from './pages/Dashboard'
 import Patients from './pages/Patients'
@@ -16,9 +18,10 @@ import Admin from './pages/Admin'
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+      <ToastProvider>
+        <Header />
 
-      <Routes>
+        <Routes>
         <Route
           path="/"
           element={<Home />}
@@ -27,6 +30,10 @@ function App() {
         <Route
           path="/login"
           element={<Login />}
+        />
+        <Route
+          path="/recuperar-senha"
+          element={<PasswordReset />}
         />
         <Route 
           path="/cadastro" 
@@ -77,7 +84,8 @@ function App() {
             </RotaProtegida>
           }
         />
-      </Routes>
+        </Routes>
+      </ToastProvider>
     </BrowserRouter>
   )
 }

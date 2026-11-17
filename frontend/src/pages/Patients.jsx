@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PatientForm from '../components/PatientForm'
+import PatientImport from '../components/PatientImport'
 import PatientList from '../components/PatientList'
 
 function Patients() {
@@ -24,6 +25,7 @@ function Patients() {
         <PatientList atualizarLista={atualizarLista} />
         <PatientForm onPacienteCadastrado={pacienteCadastrado} />
       </section>
+      <PatientImport onImportado={pacienteCadastrado} />
     </main>
   )
 }
